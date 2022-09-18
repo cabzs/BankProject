@@ -1,5 +1,7 @@
 package dao;
 
+import java.sql.SQLException;
+
 import dto.Account;
 import dto.Member;
 
@@ -14,7 +16,7 @@ public interface BankDAO {
 	/**
 	 * 회원가입
 	 * */
-	public boolean insert(Member member);
+	public void insert(Member member);
 	
 	
 	/**
@@ -25,6 +27,7 @@ public interface BankDAO {
 	
 	/**
 	 * 계좌 생성
+	 * @throws SQLException 
 	 * */
 	public boolean newAc(Account account);
 	
@@ -32,13 +35,13 @@ public interface BankDAO {
 	/**
 	 * 입금
 	 * */
-	public int deposit(String id, int amount);
+	public Long deposit(String id, int amount);
 	
 	
 	/**
 	 * 출금
 	 * */
-	public int withdraw(String id, int amount);
+	public Long withdraw(String id, int amount);
 	
 	/**
 	 * 아이디로 회원 찾기

@@ -1,5 +1,6 @@
 package view;
 
+import java.sql.SQLException;
 import java.util.Scanner;
 
 import controller.BankController;
@@ -17,19 +18,19 @@ public class SubView {
 	
 	public static void newAccount(Member member) {
 		System.out.println("*******************************");
-		System.out.println( member.getId() +"님 현재 로그인 중....☎  ");
+		System.out.println( member.getUserId() +"님 현재 로그인 중....☎  ");
 		System.out.println("*******************************");
 
 		
 		System.out.println("▶ 최초 입금액과 계좌에서 사용할 비밀번호 네자리를 입력하세요");
                               
 		System.out.print("최초 입금액 : ");
-		int bal = sc.nextInt();
+		Long bal = sc.nextLong();
 		
 		System.out.print("비밀번호 : ");
 		String accountpwd = sc.next();
 		
-		Account account = new Account(member,null,accountpwd,bal);
+		Account account = new Account(null,accountpwd,member.getUserId(),null,bal);
 		//계좌 생성 dao에 입력해서 데이터 삽입
 		
 		try {

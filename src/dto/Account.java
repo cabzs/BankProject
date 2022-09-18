@@ -3,57 +3,46 @@ package dto;
 import java.util.Date;
 
 public class Account {
+
 	
-	Member member;
-	
-	private String account;	//계좌번호
-	private String accPwd;
+	private String userAccount;	//계좌번호
+	private String accountPwd;
+	private String userId;
 	private Date startDate; //계좌 개설일
-	private double interest;	//이자율
-	private int balance;	//잔액
+	private Long balance;	//잔액
 	
-	
-	public Account(Member member, String account, String accPwd, int balance) {
+	public Account(String userAccount, String accountPwd, String userId, Date startDate, Long balance) {
 		super();
-		this.member = member;
-		this.account = account;
-		this.accPwd = accPwd;
-		this.balance = balance;
-	}
-
-	public Account(Member member, String account, String accPwd, Date startDate, double interest,
-			int balance) {
-		super();
-		this.member = member;
-		this.account = account;
-		this.accPwd = accPwd;
+		this.userAccount = userAccount;
+		this.accountPwd = accountPwd;
+		this.userId = userId;
 		this.startDate = startDate;
-		this.interest = interest;
 		this.balance = balance;
 	}
 
-	public Member getMember() {
-		return member;
+
+	public String getUserAccount() {
+		return userAccount;
 	}
 
-	public void setMember(Member member) {
-		this.member = member;
+	public void setUserAccount(String userAccount) {
+		this.userAccount = userAccount;
 	}
 
-	public String getAccount() {
-		return account;
+	public String getAccountPwd() {
+		return accountPwd;
 	}
 
-	public void setAccount(String account) {
-		this.account = account;
+	public void setAccountPwd(String accountPwd) {
+		this.accountPwd = accountPwd;
 	}
 
-	public String getAccPwd() {
-		return accPwd;
+	public String getUserId() {
+		return userId;
 	}
 
-	public void setAccPwd(String accPwd) {
-		this.accPwd = accPwd;
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 
 	public Date getStartDate() {
@@ -64,19 +53,11 @@ public class Account {
 		this.startDate = startDate;
 	}
 
-	public double getInterest() {
-		return interest;
-	}
-
-	public void setInterest(double interest) {
-		this.interest = interest;
-	}
-
-	public int getBalance() {
+	public Long getBalance() {
 		return balance;
 	}
 
-	public void setBalance(int balance) {
+	public void setBalance(Long balance) {
 		this.balance = balance;
 	}
 	

@@ -4,64 +4,70 @@ import java.time.LocalDate;
 
 public class Member {
 	
-	private String id; 
-	private String pwd; 
-	private String name; 
+	private String userId; 
+	private String userPwd; 
+	private String userName; 
 	private String phone;
 	private LocalDate date; //가입일
-	private String level; //이용자 등급
+	private String levelId; //이용자 등급
 	
 	
 	
 	
-	
-	public Member(String id, String pwd, String name, String phone) {
+	public Member(String userId, String userPwd) {
 		super();
-		this.id = id;
-		this.pwd = pwd;
-		this.name = name;
+		this.userId = userId;
+		this.userPwd = userPwd;
+	}
+
+
+	public Member(String userId, String userPwd, String userName, String phone) {
+		super();
+		this.userId = userId;
+		this.userPwd = userPwd;
+		this.userName = userName;
 		this.phone = phone;
 	}
 
 
-	public Member(String id, String pwd, String name, String phone, LocalDate date, String level) {
+	public Member(String userId, String userPwd, String userName, String phone, LocalDate date, String levelId) {
 		super();
-		this.id = id;
-		this.pwd = pwd;
-		this.name = name;
+		this.userId = userId;
+		this.userPwd = userPwd;
+		this.userName = userName;
 		this.phone = phone;
 		this.date = date;
-		this.level = level;
+		this.levelId = levelId;
 	}
 
 
-	public String getId() {
-		return id;
+	public String getUserId() {
+		return userId;
 	}
 
 
-	public void setId(String id) {
-		this.id = id;
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 
 
-	public String getPwd() {
-		return pwd;
+	public String getUserPwd() {
+		return userPwd;
 	}
 
 
-	public void setPwd(String pwd) {
-		this.pwd = pwd;
+	public void setUserPwd(String userPwd) {
+		this.userPwd = userPwd;
 	}
 
 
-	public String getName() {
-		return name;
+	public String getUserName() {
+		return userName;
 	}
 
 
-	public void setName(String name) {
-		this.name = name;
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 
 
@@ -85,18 +91,17 @@ public class Member {
 	}
 
 
-	public String getLevel() {
-		return level;
+	public String getLevelId() {
+		return levelId;
 	}
 
 
-	public void setLevel(String level) {
-		this.level = level;
+	public void setLevelId(String levelId) {
+		this.levelId = levelId;
 	}
 	
 	
-	
-	
+
 
 }
 	

@@ -74,13 +74,13 @@ public class MenuView {
 //					int balance = sc.nextInt();
 					
 					Member member = new Member(id, pwd, name, phone);
-					boolean result1 = controller.insert(member);
+					controller.insert(member);
 					
-					if(result1) {
-						System.out.println();
-						System.out.println("회원가입 성공 :) ");
-					break;
-					}
+//					if(result1) {
+//						System.out.println();
+//						System.out.println("회원가입 성공 :) ");
+//					break;
+//					}
 					
 				} else {
 					System.out.println("비밀번호가 일치하지 않습니다.");

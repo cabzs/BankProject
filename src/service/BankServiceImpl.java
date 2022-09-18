@@ -1,5 +1,7 @@
 package service;
 
+import java.sql.SQLException;
+
 import dao.BankDAO;
 import dao.BankDAOImpl;
 import dto.Account;
@@ -17,11 +19,11 @@ public class BankServiceImpl implements BankService {
 	}
 
 	@Override
-	public boolean insert(Member member) {
+	public void insert(Member member) {
 		//아이디 받고, 비밀번호 
-		boolean result = dao.insert(member);
+		dao.insert(member);
 		
-		return result;
+//		return result;
 	}
 
 	@Override
@@ -36,12 +38,12 @@ public class BankServiceImpl implements BankService {
 	}
 	
 	@Override
-	public int deposit(String id, int amount) {
+	public Long deposit(String id, int amount) {
 		return dao.deposit(id, amount);
 	}
 
 	@Override
-	public int withdraw(String id, int amount) {
+	public Long withdraw(String id, int amount) {
 		return dao.withdraw(id, amount);
 	}
 

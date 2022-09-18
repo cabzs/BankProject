@@ -11,6 +11,7 @@ import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,7 +41,7 @@ public class BankDAOImpl implements BankDAO {
 	@Override
 	public boolean idCheck(String id) {
 		boolean result = false;
-		String sql = "select * from bank where id = ? ";
+		String sql = "select * from member where id = ? ";
 		
 		if(sql.equals(id)) { //아이디가 존재한다면 false 리턴
 			result = false;
@@ -51,28 +52,28 @@ public class BankDAOImpl implements BankDAO {
 	}
 	
 	@Override
-	public boolean insert(Member member) {
-		String sql = " INSERT INTO bank VALUES(?, ?, ?, ?, ?) ";
-		//(id, pwd, name, account, join_date , balance ,level)
+	public void insert(Member member) {
+		String sql = " INSERT INTO member VALUES(?, ?, ?, ?, sysdate, 1) ";
+		//(id, pwd, name, phone, date)
 		boolean re = false;
 		
 		try {
 			pst = con.prepareStatement(sql);
-			pst.setString(1, member.getId());
-			pst.setString(2, member.getPwd());
-			pst.setString(3, member.getName());
+			pst.setString(1, member.getUserId());
+			pst.setString(2, member.getUserPwd());
+			pst.setString(3, member.getUserName());
 			pst.setString(4, member.getPhone());
-			pst.setString(5, now.toString());
+
 			//level은 default값으로 bronze 입력됨
 			
 			int result = pst.executeUpdate();
 			String msg = result > -1 ? "성공적으로 가입되었습니다." : "가입에 실패하셨습니다.";
 			
-			if(result>0) {
-				re=true;
-			} else {
-				re=false;
-			}
+//			if(result>0) {
+//				re=true;
+//			} else {
+//				re=false;
+//			}
 			
 			System.out.println(msg);
 			
@@ -87,21 +88,22 @@ public class BankDAOImpl implements BankDAO {
 			} catch(Exception e) {}
 		}
 
-		return re;
+//		return re;
 	}
 
 	@Override
 	public Member login(String id, String pwd) {
 		//입력받은 사용자 정보와 DB에 저장된 정보 비교
-		String sql = " select * from bank where id = ? ";
+		String sql = " select * from member where user_id = ? and user_pwd = ? ";
 		Member member = null;
 		try {
 			pst = con.prepareStatement(sql);
 			pst.setString(1, id);
+			pst.setString(2, pwd);
 			rs = pst.executeQuery();
 
 			if(rs.next()) {
-				member = new Member(id, pwd, id, pwd, now, null);
+				member = new Member(rs.getString(1),rs.getString(2));
 //				 String dbId = rs.getString(1);
 //				 String dbPwd = rs.getString(2);
 				System.out.println();
@@ -126,9 +128,9 @@ public class BankDAOImpl implements BankDAO {
 		
 		
 	@Override
-	public int deposit(String id, int amount) {
-		int nowBalance = account.getBalance();
-		int newBalance = nowBalance += amount;
+	public Long deposit(String id, int amount) {
+		Long nowBalance = account.getBalance();
+		Long newBalance = nowBalance += amount;
 		account.setBalance(newBalance);
 		//map.put();
 		
@@ -136,9 +138,9 @@ public class BankDAOImpl implements BankDAO {
 	}
 
 	@Override
-	public int withdraw(String id, int amount) {
-		int nowBalance = account.getBalance();
-		int newBalance = nowBalance -= amount;
+	public Long withdraw(String id, int amount) {
+		Long nowBalance = account.getBalance();
+		Long newBalance = nowBalance -= amount;
 		account.setBalance(newBalance);
 		
 		return newBalance;
@@ -152,16 +154,16 @@ public class BankDAOImpl implements BankDAO {
 
 	@Override
 	public boolean newAc(Account account) {
-		String sql = " INSERT INTO account VALUES(?, ?, ?, ?, ?) ";
+		String sql = " INSERT INTO account VALUES(?, ?, ?, sysdate, ?) ";
 		boolean re = false;
 
-		try {			
-			pst = con.prepareStatement(sql);
+		try {
+			pst = con.prepareStatement(sql); //--여기서 에러 발생
+			
 			pst.setString(1, as.random()); //계좌번호 랜덤 생성
-			pst.setString(2, account.getAccPwd());
-			pst.setString(3, now.toString()); //계좌 개설일
-			pst.setString(4, now.toString()); //이자율
-			pst.setInt(5, account.getBalance()); //계좌 잔액
+			pst.setString(2, account.getAccountPwd());
+			pst.setString(3, account.getUserId());
+			pst.setLong(4, account.getBalance()); //계좌 잔액
 			//level은 default값으로 bronze 입력됨
 			
 			int result = pst.executeUpdate();
@@ -177,6 +179,7 @@ public class BankDAOImpl implements BankDAO {
 		} catch (Exception e) {
 			System.out.println("데이터베이스를 불러오는데 실패했습니다.");
 			e.printStackTrace();
+			
 		} finally {
 			try {
 				if(pst != null) pst.close();

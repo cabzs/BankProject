@@ -1,5 +1,6 @@
 package controller;
 
+import java.sql.SQLException;
 import java.util.Scanner;
 
 import dto.Account;
@@ -19,11 +20,11 @@ public class BankController {
 	/**
 	 * 회원가입
 	 * */
-	public boolean insert(Member member) {
+	public void insert(Member member) {
 		//비밀번호 일치할때 회원가입
-		boolean result = service.insert(member);
+		service.insert(member);
 		
-		return result;
+//		return result;
 		
 	}
 	
@@ -76,7 +77,7 @@ public class BankController {
 	/**
 	 * 입금
 	 * */
-	public int deposit(String id, int amount) throws BalanceInstufficientException {
+	public Long deposit(String id, int amount) throws BalanceInstufficientException {
 		if(amount<0) {
 			throw new BalanceInstufficientException("입금은 0원 이상부터 가능합니다.");
 		} else {
@@ -87,7 +88,7 @@ public class BankController {
 	/**
 	 * 출금
 	 * */
-	public int withdraw(String id, int amount) throws BalanceInstufficientException {
+	public Long withdraw(String id, int amount) throws BalanceInstufficientException {
 //		if((service.findById(id)).getBalance() <amount) {
 //			throw new BalanceInstufficientException("출금액이 계좌 잔금보다 큽니다.");
 //		} else if (amount<0){

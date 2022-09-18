@@ -1,5 +1,7 @@
 package service;
 
+import java.sql.SQLException;
+
 import dto.Account;
 import dto.Member;
 import exception.NotfoundException;
@@ -15,7 +17,7 @@ public interface BankService {
 	/**
 	 * 회원가입
 	 * */
-	public boolean insert(Member member);
+	public void insert(Member member);
 
 	
 	/**
@@ -37,14 +39,14 @@ public interface BankService {
 	 * 입금
 	 * @throws NotfoundException 
 	 * */
-	public int deposit(String id, int amount);
+	public Long deposit(String id, int amount);
 
 	
 	/**
 	 * 출금
 	 * @throws NotfoundException 
 	 * */
-	public int withdraw(String id, int amount);
+	public Long withdraw(String id, int amount);
 	
 	
 	/**
