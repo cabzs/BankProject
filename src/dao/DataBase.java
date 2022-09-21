@@ -8,15 +8,14 @@ import java.sql.Statement;
 public class DataBase {
 	
 	private static DataBase instance;
-	private Connection con;
 	
 	public DataBase () {
 		try {
 //			Class.forName("com.mysql.cj.jdbc.Driver");
 			Class.forName("oracle.jdbc.driver.OracleDriver");
 //			con = DriverManager.getConnection("jdbc:mysql://localhost:3306/app?autoReconnect=true", "root", "1234");
-			con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "c##bank", "bank");
-		}catch(ClassNotFoundException | SQLException e) {
+//			con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:xe", "c##bank", "bank");
+		}catch(ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
@@ -28,8 +27,15 @@ public class DataBase {
 		return instance;
 	} 
 	
-	public Connection getConnection() {
-		return this.con;
+	public Connection getConnection() { //매번 새롭게 커넥션 생성
+		Connection con = null;
+		try {
+			con = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:system", "bank", "bank");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return con;
 	}
 	
 //	public static void main(String[] args) {

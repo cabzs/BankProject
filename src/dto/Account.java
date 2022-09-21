@@ -11,6 +11,21 @@ public class Account {
 	private Date startDate; //계좌 개설일
 	private Long balance;	//잔액
 	
+	public Account() {}
+	
+	
+	public Account(String userAccount) {
+		super();
+		this.userAccount = userAccount;
+	}
+
+
+	public Account(String userAccount, String accountPwd) {
+		super();
+		this.userAccount = userAccount;
+		this.accountPwd = accountPwd;
+	}
+
 	public Account(String userAccount, String accountPwd, String userId, Date startDate, Long balance) {
 		super();
 		this.userAccount = userAccount;

@@ -38,8 +38,8 @@ public class BankServiceImpl implements BankService {
 	}
 	
 	@Override
-	public Long deposit(String id, int amount) {
-		return dao.deposit(id, amount);
+	public void deposit(String account, String uAccount, int amount) {
+		dao.deposit(account, uAccount, amount);
 	}
 
 	@Override
@@ -56,8 +56,20 @@ public class BankServiceImpl implements BankService {
 
 
 	@Override
-	public boolean newAc(Account account) {
+	public boolean newAc(Account account) throws Exception {
+		if(account == null) {
+			throw new Exception();
+		}
 		return dao.newAc(account);
+	}
+
+	@Override
+	public boolean pwdCheck(String ac, String pwd) throws Exception {
+		if(ac == null && pwd == null) {
+			throw new Exception();
+		} else {
+			return dao.pwdCheck(ac, pwd);
+		}
 	}
 
 

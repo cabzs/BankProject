@@ -35,7 +35,7 @@ public interface BankDAO {
 	/**
 	 * 입금
 	 * */
-	public Long deposit(String id, int amount);
+	public void deposit(String account, String id, int amount);
 	
 	
 	/**
@@ -48,4 +48,10 @@ public interface BankDAO {
 	 * */
 	public Member findById(String id);
 	
+	
+	/**
+	 * 계좌 비밀번호 체크
+	 * */
+	public boolean pwdCheck(String ac, String pwd);
+
 }

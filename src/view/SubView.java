@@ -11,12 +11,12 @@ import exception.NotfoundException;
 public class SubView {
 	
 	public static Member member;
-	public static Account account;
+//	public static Account account;
 	private static Scanner sc = new Scanner(System.in);
 	public static BankController controller = new BankController();
 	static int amount ;
 	
-	public static void newAccount(Member member) {
+	public static void newAccount(Member member) throws Exception {
 		System.out.println("*******************************");
 		System.out.println( member.getUserId() +"님 현재 로그인 중....☎  ");
 		System.out.println("*******************************");
@@ -30,11 +30,16 @@ public class SubView {
 		System.out.print("비밀번호 : ");
 		String accountpwd = sc.next();
 		
-		Account account = new Account(null,accountpwd,member.getUserId(),null,bal);
+		Account account = new Account();
+		account.setAccountPwd(accountpwd);
+		account.setUserId(member.getUserId());
+		account.setBalance(bal);
+//		account = new Account(null,null,member.getUserId(),null,bal);
 		//계좌 생성 dao에 입력해서 데이터 삽입
 		
 		try {
 			controller.newAc(account);
+			
 		} catch (NotfoundException e) {
 			e.printStackTrace();
 		}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         

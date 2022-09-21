@@ -58,11 +58,12 @@ public class BankController {
 	 * 계좌 생성
 	 * @throws NotfoundException 
 	 * */
-	public boolean newAc(Account account) throws NotfoundException {
+	public boolean newAc(Account account) throws Exception {
+		System.out.println(account);
 		if(account == null) {
 			throw new NotfoundException("계좌를 찾을 수 없습니다.");
 		} else {
-			boolean result = service.newAc(acconut);
+			boolean result = service.newAc(account);
 			return result;
 		}
 	}
@@ -75,13 +76,22 @@ public class BankController {
 	}
 	
 	/**
+	 * 계좌 비밀번호 일치 확인
+	 * @throws Exception 
+	 * */
+	public boolean pwdCheck(String ac, String pwd) throws Exception {
+		return service.pwdCheck(ac, pwd);
+	}
+	
+	
+	/**
 	 * 입금
 	 * */
-	public Long deposit(String id, int amount) throws BalanceInstufficientException {
+	public void deposit(String account, String uAccount, int amount) throws BalanceInstufficientException {
 		if(amount<0) {
 			throw new BalanceInstufficientException("입금은 0원 이상부터 가능합니다.");
 		} else {
-			return service.deposit(id, amount);
+			service.deposit(account, uAccount, amount);
 		}
 	}
 	

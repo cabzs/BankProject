@@ -30,16 +30,22 @@ public interface BankService {
 	
 	/**
 	 * 계좌 생성
+	 * @throws Exception 
 	 * */
-	public boolean newAc (Account account);
+	public boolean newAc (Account account) throws Exception;
 	
+	/**
+	 * 계좌 비밀번호 확인
+	 * @throws Exception 
+	 * */
+	public boolean pwdCheck(String ac, String pwd) throws Exception;
 	
 	
 	/**
 	 * 입금
 	 * @throws NotfoundException 
 	 * */
-	public Long deposit(String id, int amount);
+	public void deposit(String account, String uAccount, int amount);
 
 	
 	/**
