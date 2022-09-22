@@ -59,7 +59,6 @@ public class BankController {
 	 * @throws NotfoundException 
 	 * */
 	public boolean newAc(Account account) throws Exception {
-		System.out.println(account);
 		if(account == null) {
 			throw new NotfoundException("계좌를 찾을 수 없습니다.");
 		} else {

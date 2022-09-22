@@ -204,7 +204,7 @@ public class BankDAOImpl implements BankDAO {
 			pst.setString(2, uAccount);
 			int re = pst.executeUpdate();
 			con.commit();
-			depositor(account2, accountNowBal, amount); //입금자의 db 업데이트
+//			depositor(account2, accountNowBal, amount); //입금자의 db 업데이트
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -237,11 +237,11 @@ public class BankDAOImpl implements BankDAO {
 			System.out.println("현재 계좌의 잔액은 " +account1.getBalance()+"원 입니다.");
 		} else {
 			System.out.println("▒▒▒▒▒▒▒▒▒▒▒▒입금 명세표▒▒▒▒▒▒▒▒▒▒▒▒▒");
-			System.out.println("출금 계좌 : " + account);
-			System.out.println("입금 계좌 : " + uAccount);
-			System.out.println("입금액 : " + amount);
+			System.out.println("   출금 계좌 : " + account);
+			System.out.println("   입금 계좌 : " + uAccount);
+			System.out.println("   입금액 : " + amount);
 			System.out.println("==================================");
-			
+			depositor(account2, accountNowBal, amount); //입금자의 db 업데이트
 			return;
 			
 		}
@@ -270,7 +270,8 @@ public class BankDAOImpl implements BankDAO {
 			pst.setString(2, account2.getUserAccount());
 			int re = pst.executeUpdate();
 			con.commit();
-			System.out.println("내 계좌 잔액 : " + accountNowBal);
+			System.out.println("   내 계좌 잔액 : " + accountNowBal);
+			System.out.println();
 
 			
 		} catch (Exception e) {

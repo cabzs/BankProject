@@ -34,6 +34,7 @@ public class MenuView {
 		switch (menuNum) {
 		case 1:
 			joinLogin(); 
+			break;
 	
 		case 2:
 			try {
@@ -46,6 +47,7 @@ public class MenuView {
 	}//mainMenu
 	
 	public static void joinLogin () {
+		System.out.println("비회원이라면 회원가입을 먼저 진행해주세요");
 		System.out.println("----------------------------");
 		System.out.println("  1. 회원 가입 |   2. 로그인   ");
 		System.out.println("----------------------------");
@@ -80,6 +82,7 @@ public class MenuView {
 					
 					Member member = new Member(id, pwd, name, phone);
 					controller.insert(member);
+					break;
 					
 //					if(result1) {
 //						System.out.println();
@@ -150,7 +153,6 @@ public class MenuView {
 				System.out.print("계좌 비밀번호 : ");
 				String pwd1 = sc.next();
 				if(pwd.equals(pwd1)) {
-					System.out.println(pwd + " \t " +pwd1);
 					controller.deposit(account, uAccount, amount);
 				}
 				
