@@ -179,40 +179,49 @@ public class BankDAOImpl implements BankDAO {
 		Account account1 = findbyAc(uAccount); //입금 받는 사람
 		Account account2 = findbyAc(account); //입금 하는 사람
 		
-		Long nowBalance = account1.getBalance();
+		Long nowBalance = account1.getBalance(); //입금받는사람 현재 잔고
 //		System.out.println(nowBalance);
-		Long newBalance = nowBalance += amount;
+		Long newBalance = nowBalance + amount; //입금받는 사람 입금 후 잔고
 //		System.out.println(newBalance);
 		
-		account1.setBalance(newBalance); //입금 받는 사람의 잔액에 +
+		//account1.setBalance(newBalance); //입금 받는 사람의 잔액에 +
 		
 		
-		Connection con = DataBase.getInstance().getConnection();
+		Long accountBal = account2.getBalance(); //입금하는 사람 현재 잔고
+		Long accountNowBal = accountBal - amount; //입금하는 사람 입금 후 잔고
+		
+		Connection con = null;
 		PreparedStatement pst = null;
 		ResultSet rs = null;
 		
 		try {
 			
+			con = DataBase.getInstance().getConnection();
 			con.setAutoCommit(false);
-			
-			Savepoint savepoint1 = con.setSavepoint("Savepoint1");
-			String sql = " update account set balance= ? where user_account= ? ";
-			
-			pst = con.prepareStatement(sql);
+			//입금받는 사람의 계좌 잔고 업데이트
+			pst = con.prepareStatement(" update account set balance= ? where user_account= ? ");
 			pst.setLong(1, newBalance);
 			pst.setString(2, uAccount);
 			int re = pst.executeUpdate();
-			
-			String sql2 = " update account set balance= ? where user_account= ? ";
-			pst = con.prepareStatement(sql2);
-			pst.setLong(1, newBalance);
-			pst.setString(2, uAccount);
-			int re1 = pst.executeUpdate();
-			
+			con.commit();
+			depositor(account2, accountNowBal, amount); //입금자의 db 업데이트
 			
 		} catch (Exception e) {
 			e.printStackTrace();
-			} finally {
+			if(con!=null) 
+				try{
+					con.rollback();
+					}catch(SQLException sqle){}
+			
+			} 
+		
+		try {
+			con.setAutoCommit(true);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		finally { 
 				try {
 					//열어주는 역순으로 닫아준다
 					if(rs != null) rs.close();
@@ -220,6 +229,7 @@ public class BankDAOImpl implements BankDAO {
 					if(con != null) con.close();
 				} catch(Exception e) {}
 			}
+		
 	
 		
 		
@@ -230,17 +240,71 @@ public class BankDAOImpl implements BankDAO {
 			System.out.println("출금 계좌 : " + account);
 			System.out.println("입금 계좌 : " + uAccount);
 			System.out.println("입금액 : " + amount);
-			System.out.println();
 			System.out.println("==================================");
-			System.out.println("내 계좌 잔액 : " + account2.getBalance());
+			
 			return;
 			
 		}
+		try {
+			con.setAutoCommit(true);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		
 	}
+	
+	//입금하는 사람 계좌 잔액 관리
+	public void depositor (Account account2, Long accountNowBal , int amount) {
+		Connection con = null;
+		PreparedStatement pst = null;
+		ResultSet rs = null;
+		
+		
+		try {
+			
+			con = DataBase.getInstance().getConnection();
+			con.setAutoCommit(false);
+			//입금받는 사람의 계좌 잔고 업데이트
+			pst = con.prepareStatement(" update account set balance= ? where user_account= ? ");
+			pst.setLong(1, accountNowBal);
+			pst.setString(2, account2.getUserAccount());
+			int re = pst.executeUpdate();
+			con.commit();
+			System.out.println("내 계좌 잔액 : " + accountNowBal);
+
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			if(con!=null) 
+				try{
+					con.rollback();
+					}catch(SQLException sqle){}
+			
+			try {
+				con.setAutoCommit(true);
+			} catch (SQLException eq) {
+				e.printStackTrace();
+			}
+			
+			} finally {
+				try {
+					//열어주는 역순으로 닫아준다
+					if(rs != null) rs.close();
+					if(pst != null) pst.close();
+					if(con != null) con.close();
+				} catch(Exception e) {}
+			}
+	}
+	
+	
+	
+	
+	
 
 	@Override
 	public Long withdraw(String id, int amount) {
+		//커넥션이 null이면.. 새로 만들고 출금
+		//아니면 받은걸로 쓰고 커밋~
 		Long nowBalance = account.getBalance();
 		Long newBalance = nowBalance -= amount;
 		account.setBalance(newBalance);
