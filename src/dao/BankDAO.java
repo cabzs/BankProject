@@ -41,13 +41,17 @@ public interface BankDAO {
 	/**
 	 * 출금
 	 * */
-	public Long withdraw(String id, int amount);
+	public void withdraw(String account, int amount);
 	
 	/**
 	 * 아이디로 회원 찾기
 	 * */
 	public Member findById(String id);
 	
+	/**
+	 * 계좌번호로 계좌정보 구하기
+	 * */
+	public Account findbyAc(String uAccount);
 	
 	/**
 	 * 계좌 비밀번호 체크

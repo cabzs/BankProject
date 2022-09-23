@@ -43,8 +43,8 @@ public class BankServiceImpl implements BankService {
 	}
 
 	@Override
-	public Long withdraw(String id, int amount) {
-		return dao.withdraw(id, amount);
+	public void withdraw(String account, int amount) {
+		dao.withdraw(account, amount);
 	}
 
 	

@@ -42,6 +42,15 @@ public class MenuView {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+			
+		case 3:
+			try {
+				witdraw();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+			
 			}//switch		
 		}//while
 	}//mainMenu
@@ -155,22 +164,57 @@ public class MenuView {
 				if(pwd.equals(pwd1)) {
 					controller.deposit(account, uAccount, amount);
 				}
-				
+				break;
 				
 			case 2:
+				System.out.println("프로그램을 종료합니다.");
 				break;
 			}
-			
-			
 		}
-		
-		
-		
-		
-		
-		
 	}
 	
+	//출금 메소드
+	public static void witdraw() throws Exception {
+		System.out.println("▶ 출금하실 계좌번호를 입력하세요");
+		System.out.print("계좌번호 : ");
+		String account = sc.next();
+		
+		System.out.println("▶ 계좌 비밀번호 네자리를 입력하세요 ");
+		System.out.print("계좌 비밀번호 : ");
+		String pwd = sc.next();
+		
+		boolean result = controller.pwdCheck(account, pwd);
+		
+		if(result) { // 내 계좌정보 확인 되면 이동
+
+			System.out.println("▶ 출금하실 금액을 입력하세요");
+			System.out.print("출금 금액 : ");
+			int amount = sc.nextInt();
+
+			System.out.println("출금하실 금액: " + amount);
+			
+			System.out.println("▶ 해당 계좌로의 출금을 진행하시겠습니까?");
+			System.out.println("---------------------");
+			System.out.println("  1. 예 |   2. 아니요  ");
+			System.out.println("---------------------");
+			int num = sc.nextInt();
+			
+			switch (num) {
+			case 1:
+				//계좌번호 비밀번호 입력, 
+				System.out.println("▶ 계좌 비밀번호 네자리를 한번 더 입력하세요 ");
+				System.out.print("계좌 비밀번호 : ");
+				String pwd1 = sc.next();
+				if(pwd.equals(pwd1)) {
+					controller.withdraw(account, amount);
+				}
+				
+			case 2:
+				System.out.println("프로그램을 종료합니다.");
+				break;
+			}
+		}
+	}
 	
 }//class
 

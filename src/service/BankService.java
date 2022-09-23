@@ -52,7 +52,7 @@ public interface BankService {
 	 * 출금
 	 * @throws NotfoundException 
 	 * */
-	public Long withdraw(String id, int amount);
+	public void withdraw(String account, int amount);
 	
 	
 	/**

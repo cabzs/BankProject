@@ -296,21 +296,63 @@ public class BankDAOImpl implements BankDAO {
 				} catch(Exception e) {}
 			}
 	}
-	
-	
-	
-	
-	
 
 	@Override
-	public Long withdraw(String id, int amount) {
+	public void withdraw(String account, int amount) {
+		//만약 해당 계좌번호 id가 로그인중인 id와 일치한다면 잔액 출력
+		//계좌주가 다르다면 입금 영수증만 출력
+		//account(=account2) - 입금하는 사람 uAccount(=account1) - 입금받는사람
+
+		Account account2 = findbyAc(account); //출금하는 사람
+		
+		Long nowBalance = account2.getBalance(); //출금하는 사람 현재 잔고
+		Long newBalance = nowBalance - amount; //출금하는 사람 출금 후 잔고
+		
 		//커넥션이 null이면.. 새로 만들고 출금
 		//아니면 받은걸로 쓰고 커밋~
-		Long nowBalance = account.getBalance();
-		Long newBalance = nowBalance -= amount;
-		account.setBalance(newBalance);
+		Connection con = null;
+		PreparedStatement pst = null;
+		ResultSet rs = null;
 		
-		return newBalance;
+		try {
+			
+			con = DataBase.getInstance().getConnection();
+			con.setAutoCommit(false);
+			//입금받는 사람의 계좌 잔고 업데이트
+			pst = con.prepareStatement(" update account set balance= ? where user_account= ? ");
+			pst.setLong(1, newBalance);
+			pst.setString(2, account2.getUserAccount());
+			int re = pst.executeUpdate();
+			con.commit();
+			System.out.println("▒▒▒▒▒▒▒▒▒▒▒▒출금 명세표▒▒▒▒▒▒▒▒▒▒▒▒▒");
+			System.out.println("   출금 계좌 : " + account);
+			System.out.println("   출금액 : " + amount);
+			System.out.println("==================================");
+			System.out.println("   내 계좌 잔액 : " + newBalance);
+			System.out.println();
+
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			if(con!=null) 
+				try{
+					con.rollback();
+					}catch(SQLException sqle){}
+			
+			try {
+				con.setAutoCommit(true);
+			} catch (SQLException eq) {
+				e.printStackTrace();
+			}
+			
+			} finally {
+				try {
+					//열어주는 역순으로 닫아준다
+					if(rs != null) rs.close();
+					if(pst != null) pst.close();
+					if(con != null) con.close();
+				} catch(Exception e) {}
+			}
 	}
 
 	@Override
