@@ -10,7 +10,7 @@ import exception.NotfoundException;
 
 public class SubView {
 	
-	public static Member member;
+//	public static Member member;
 //	public static Account account;
 	private static Scanner sc = new Scanner(System.in);
 	public static BankController controller = new BankController();

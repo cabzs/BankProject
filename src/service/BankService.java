@@ -1,6 +1,7 @@
 package service;
 
 import java.sql.SQLException;
+import java.util.List;
 
 import dto.Account;
 import dto.Member;
@@ -58,7 +59,16 @@ public interface BankService {
 	/**
 	 * 아이디로 회원 찾기
 	 * */
-	public Member findById(String id);
+	public List<Account> findById(String id);
+	
+	
+	/**
+	 * 전체 회원 조회
+	 * */
+	public List<Member> selectAll();
+	
+
+	
 	
 
 }

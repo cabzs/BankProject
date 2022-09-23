@@ -27,9 +27,7 @@ import view.SubView;
 
 public class BankDAOImpl implements BankDAO {
 
-	List<Member> members = new ArrayList<Member>();
 	LocalDate now = LocalDate.now();
-	Map<String, Member> map = new HashMap<String, Member>();
 	private static AccountService as = new AccountService(); //계좌번호 생성
 	Member member;
 	Account account;
@@ -221,20 +219,8 @@ public class BankDAOImpl implements BankDAO {
 			e.printStackTrace();
 		}
 		
-		finally { 
-				try {
-					//열어주는 역순으로 닫아준다
-					if(rs != null) rs.close();
-					if(pst != null) pst.close();
-					if(con != null) con.close();
-				} catch(Exception e) {}
-			}
-		
-	
-		
-		
 		if(account2.getUserId().equals(account1.getUserId())) {
-			System.out.println("현재 계좌의 잔액은 " +account1.getBalance()+"원 입니다.");
+			System.out.println("▶ 현재 계좌의 잔액은 " +account1.getBalance()+"원 입니다.");
 		} else {
 			System.out.println("▒▒▒▒▒▒▒▒▒▒▒▒입금 명세표▒▒▒▒▒▒▒▒▒▒▒▒▒");
 			System.out.println("   출금 계좌 : " + account);
@@ -250,7 +236,16 @@ public class BankDAOImpl implements BankDAO {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+
+		finally { 
+				try {
+					//열어주는 역순으로 닫아준다
+					if(rs != null) rs.close();
+					if(pst != null) pst.close();
+					if(con != null) con.close();
+				} catch(Exception e) {}
+			}
+
 	}
 	
 	//입금하는 사람 계좌 잔액 관리
@@ -309,7 +304,7 @@ public class BankDAOImpl implements BankDAO {
 		Long newBalance = nowBalance - amount; //출금하는 사람 출금 후 잔고
 		
 		//커넥션이 null이면.. 새로 만들고 출금
-		//아니면 받은걸로 쓰고 커밋~
+		//아니면 받은걸로 쓰고 커밋
 		Connection con = null;
 		PreparedStatement pst = null;
 		ResultSet rs = null;
@@ -354,11 +349,41 @@ public class BankDAOImpl implements BankDAO {
 				} catch(Exception e) {}
 			}
 	}
-
+	
+	//아이디로 계좌 찾기
 	@Override
-	public Member findById(String id) {
-		Member member = map.get(id);
-		return member;
+	public List<Account> findById(String id) {
+		Connection con = DataBase.getInstance().getConnection();
+		PreparedStatement pst = null;
+		ResultSet rs = null;
+		
+		List<Account> list = new ArrayList<Account>();
+		
+		String sql = " select user_account , balance , start_date from account where user_id = ?";
+		
+		try {
+			pst = con.prepareStatement(sql);
+			pst.setString(1, id);
+			rs = pst.executeQuery();
+
+			while(rs.next()) {
+				Account ac = new Account(rs.getString(1), rs.getLong(2), rs.getDate(3));
+				list.add(ac);
+				System.out.println();
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			} finally {
+				try {
+					//열어주는 역순으로 닫아준다
+					if(rs != null) rs.close();
+					if(pst != null) pst.close();
+					if(con != null) con.close();
+				} catch(Exception e) {}
+			}
+		
+		return list;
 	}
 
 	@Override
@@ -440,6 +465,45 @@ public class BankDAOImpl implements BankDAO {
 		
 		return result;
 	}
+
+	@Override
+	public List<Member> selectAll() {
+		Connection con = DataBase.getInstance().getConnection();
+		PreparedStatement pst = null;
+		ResultSet rs = null;
+
+		List<Member> list = new ArrayList<Member>();
+		
+		String sql = " select  user_id, user_name, phone, join_date, level_id from member where user_id not in('admin') order by join_date desc";
+
+		try {
+			pst = con.prepareStatement(sql);
+			rs = pst.executeQuery();
+			
+			while(rs.next()) {
+				Member member = new Member(rs.getString(1), rs.getString(2), rs.getString(3), rs.getDate(4).toLocalDate(), rs.getString(5));
+				List<Account> accounts = this.findById(member.getUserId());
+				member.setAcList(accounts);
+				list.add(member);
+				
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			} finally {
+				try {
+					//열어주는 역순으로 닫아준다
+					if(rs != null) rs.close();
+					if(pst != null) pst.close();
+					if(con != null) con.close();
+				} catch(Exception e) {}
+			}
+		
+		
+		return list;
+	}
+	
+	//계좌 목록 가져오는 메소드
 
 
 }

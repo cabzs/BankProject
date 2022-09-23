@@ -36,6 +36,15 @@ public class Account {
 	}
 
 
+
+	public Account(String userAccount, Long balance, Date startDate) {
+		super();
+		this.userAccount = userAccount;
+		this.balance = balance;
+		this.startDate = startDate;
+	}
+
+
 	public String getUserAccount() {
 		return userAccount;
 	}

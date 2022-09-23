@@ -1,6 +1,7 @@
 package service;
 
 import java.sql.SQLException;
+import java.util.List;
 
 import dao.BankDAO;
 import dao.BankDAOImpl;
@@ -49,9 +50,8 @@ public class BankServiceImpl implements BankService {
 
 	
 	@Override
-	public Member findById(String id) {
-		Member member = dao.findById(id);
-		return member;
+	public List<Account> findById(String id) {
+		return dao.findById(id);
 	}
 
 
@@ -70,6 +70,11 @@ public class BankServiceImpl implements BankService {
 		} else {
 			return dao.pwdCheck(ac, pwd);
 		}
+	}
+
+	@Override
+	public List<Member> selectAll() {
+		return dao.selectAll();
 	}
 
 

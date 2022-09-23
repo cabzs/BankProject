@@ -1,5 +1,6 @@
 package controller;
 
+import java.util.List;
 import java.util.Scanner;
 
 import dao.BankDAO;
@@ -41,19 +42,18 @@ public class BankController {
 	
 	/**
 	 * 로그인
+	 * @throws NotfoundException 
 	 * */
-	public void login(String id, String pwd) {
-		try {
-			Member member = service.login(id, pwd);
-			//로그인 성공시 subMenu로 이동
-			SubView.newAccount(member);
-			
-			
-		}catch (Exception e) {
-			e.printStackTrace();
-			//FailView.errorMessage(e.getMessage());
-			
-		}
+	public Member login(String id, String pwd) throws NotfoundException {
+//		try {
+//			Member member = service.login(id, pwd);
+//			//로그인 성공시 subMenu로 이동
+//			//SubView.newAccount(member);
+//		}catch (Exception e) {
+//			e.printStackTrace();
+//			//FailView.errorMessage(e.getMessage());
+//		}
+		return service.login(id, pwd);
 	}
 	
 	/**
@@ -72,8 +72,9 @@ public class BankController {
 	/**
 	 * 회원 조회
 	 * */
-	public void memberList() {
+	public List<Member> selectAll() {
 		
+		return service.selectAll();
 	}
 	
 	/**
@@ -110,5 +111,15 @@ public class BankController {
 		
 		service.withdraw(account, amount);
 	}
+	
+	/**
+	 * 아이디로 계좌 조회하기
+	 * @throws NotfoundException 
+	 * */
+	public List<Account> findById(String id) {
+		return service.findById(id);
+	}
+	
+	
 
 }
