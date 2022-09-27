@@ -1,5 +1,6 @@
 package view;
 
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
@@ -20,6 +21,8 @@ public class MenuView {
 	final private static String koreng = "^[가-힣a-zA-Z]*$"; //한글+영문 조합만
 	final private static String phonenum = "^01(?:0|1|[6-9])-(?:\\d{3}|\\d{4})-\\d{4}$"; //휴대폰번호 양식
 	final private static String kor = "^[가-힣]*$"; //한글만
+	
+	private static DecimalFormat formatter = new DecimalFormat("###,###");
 	
 	public void mainMenu() {
 		
@@ -337,7 +340,7 @@ public class MenuView {
 			System.out.println("====================================================");
 			System.out.println("      계좌번호       |      잔액       |     계좌 개설일  ");
 			for(Account acc : list) {
-				System.out.println("  "+acc.getUserAccount()+"   \t  "+acc.getBalance()+"    \t  "+acc.getStartDate());
+				System.out.println("  "+acc.getUserAccount()+"   \t  "+formatter.format(acc.getBalance())+"    \t  "+acc.getStartDate());
 			}
 			System.out.println();
 		}
@@ -369,7 +372,7 @@ public class MenuView {
 				System.out.println("         계좌        |         잔액        |        계좌 개설일        ");
 				System.out.println("-------------------------------------------------------------------");
 				for(Account a : m.getAcList()) {
-					System.out.println("  ㄴ "+a.getUserAccount()+"         "+a.getBalance()+" 원              "+a.getStartDate());
+					System.out.println("  ㄴ "+a.getUserAccount()+"         "+formatter.format(a.getBalance())+" 원              "+a.getStartDate());
 				}
 				System.out.println("===================================================================");
 			}
