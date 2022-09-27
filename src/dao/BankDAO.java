@@ -5,6 +5,7 @@ import java.util.List;
 
 import dto.Account;
 import dto.Member;
+import dto.Trade;
 
 public interface BankDAO {
 	
@@ -63,5 +64,10 @@ public interface BankDAO {
 	 * 회원 전체 검색
 	 * */
 	public List<Member> selectAll();
+	
+	/**
+	 * 계좌 거래 내역 리스트
+	 * */
+	public List<Trade> tradeList();
 
 }

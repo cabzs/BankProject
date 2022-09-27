@@ -12,7 +12,7 @@ public class Member {
 	private LocalDate date; //가입일
 	private String levelId; //이용자 등급
 	
-	private List<Account> acList;
+	private List<Account> acList; //회원당 계좌 리스트
 	
 	//account list...
 	

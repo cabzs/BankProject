@@ -22,6 +22,7 @@ import java.util.StringTokenizer;
 
 import dto.Account;
 import dto.Member;
+import dto.Trade;
 import service.AccountService;
 import view.SubView;
 
@@ -523,8 +524,25 @@ public class BankDAOImpl implements BankDAO {
 		
 		return list;
 	}
+
 	
-	//계좌 목록 가져오는 메소드
+	
+	//거래 내역 기록하는 메소드
+	@Override
+	public List<Trade> tradeList() {
+		Connection con = DataBase.getInstance().getConnection();
+		PreparedStatement pst = null;
+		ResultSet rs = null;
+		
+		List<Trade> list = new ArrayList<>();
+		
+		
+		
+		
+		return null;
+	}
+	
+	
 
 
 }
