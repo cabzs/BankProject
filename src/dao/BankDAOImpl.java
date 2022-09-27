@@ -39,14 +39,36 @@ public class BankDAOImpl implements BankDAO {
 	
 	@Override
 	public boolean idCheck(String id) {
-		boolean result = false;
-		String sql = "select * from member where id = ? ";
 		
-		if(sql.equals(id)) { //아이디가 존재한다면 false 리턴
-			result = false;
-		} else {
-			result = true;
-		}
+		Connection con = DataBase.getInstance().getConnection();
+		PreparedStatement pst = null;
+		ResultSet rs = null;
+		boolean result = false;
+		String sql = "select * from member where user_id = ? ";
+		
+		try {
+			pst = con.prepareStatement(sql);
+			pst.setString(1, id);
+			rs = pst.executeQuery();
+			if(rs.next()) {
+				System.out.println("※ 이미 존재하는 아이디입니다. 다른 아이디를 사용해주세요");
+				System.out.println();
+				result = false;
+			} else {
+				System.out.println("※ 사용 가능한 아이디입니다.");
+				result = true;
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			} finally {
+				try {
+					//열어주는 역순으로 닫아준다
+					if(rs != null) rs.close();
+					if(pst != null) pst.close();
+					if(con != null) con.close();
+				} catch(Exception e) {}
+			}
 		return result;
 	}
 	
@@ -56,7 +78,6 @@ public class BankDAOImpl implements BankDAO {
 		PreparedStatement pst = null;
 		String sql = " INSERT INTO member VALUES(?, ?, ?, ?, sysdate, 1) ";
 		//(id, pwd, name, phone, date)
-		boolean re = false;
 		
 		try {
 			pst = con.prepareStatement(sql);

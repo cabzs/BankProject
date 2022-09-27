@@ -17,13 +17,16 @@ public class Member {
 	//account list...
 	
 	
+	public Member(String userId) {
+		super();
+		this.userId = userId;
+	}
 	
 	public Member(String userId, String userPwd) {
 		super();
 		this.userId = userId;
 		this.userPwd = userPwd;
 	}
-
 
 	public Member(String userId, String userPwd, String userName, String phone) {
 		super();

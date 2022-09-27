@@ -35,7 +35,12 @@ public class BankController {
 	 * 아이디 중복 체크
 	 * */
 	public boolean idCheck(String id) {
-		boolean result = service.idCheck(id); 
+		boolean result = false;
+		try {
+			result = service.idCheck(id); 
+		} catch (Exception e) {
+			System.out.println("이미 존재하는 아이디입니다.");
+		}
 		return result;
 	}
 	
@@ -44,29 +49,29 @@ public class BankController {
 	 * 로그인
 	 * @throws NotfoundException 
 	 * */
-	public Member login(String id, String pwd) throws NotfoundException {
-//		try {
-//			Member member = service.login(id, pwd);
-//			//로그인 성공시 subMenu로 이동
-//			//SubView.newAccount(member);
-//		}catch (Exception e) {
-//			e.printStackTrace();
-//			//FailView.errorMessage(e.getMessage());
-//		}
-		return service.login(id, pwd);
+	public Member login(String id, String pwd) {
+		Member m = null;
+		try {
+			m = service.login(id, pwd);
+		} catch (NotfoundException e) {
+			System.out.println("아이디와 비밀번호를 입력해주세요");
+		}
+		return m;
+
 	}
 	
 	/**
 	 * 계좌 생성
 	 * @throws NotfoundException 
 	 * */
-	public boolean newAc(Account account) throws Exception {
-		if(account == null) {
-			throw new NotfoundException("계좌를 찾을 수 없습니다.");
-		} else {
-			boolean result = service.newAc(account);
-			return result;
+	public boolean newAc(Account account) {
+		boolean result = false;
+		try {
+			result = service.newAc(account);
+		} catch (Exception e) {
+			System.out.println("계좌번호를 입력해주세요.");
 		}
+		return result;
 	}
 
 	/**
@@ -81,8 +86,14 @@ public class BankController {
 	 * 계좌 비밀번호 일치 확인
 	 * @throws Exception 
 	 * */
-	public boolean pwdCheck(String ac, String pwd) throws Exception {
-		return service.pwdCheck(ac, pwd);
+	public boolean pwdCheck(String ac, String pwd) {
+		boolean result = false;
+		try {
+			result = service.pwdCheck(ac, pwd);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
 	}
 	
 	

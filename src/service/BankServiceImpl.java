@@ -56,9 +56,9 @@ public class BankServiceImpl implements BankService {
 
 
 	@Override
-	public boolean newAc(Account account) throws Exception {
+	public boolean newAc(Account account) throws NotfoundException {
 		if(account == null) {
-			throw new Exception();
+			throw new NotfoundException();
 		}
 		return dao.newAc(account);
 	}

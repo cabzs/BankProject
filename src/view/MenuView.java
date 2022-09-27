@@ -2,19 +2,26 @@ package view;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 import controller.BankController;
 import dto.Account;
 import dto.Member;
+import exception.BalanceInstufficientException;
 import exception.NotfoundException;
 
 public class MenuView {
 	private static Scanner sc = new Scanner(System.in);
 	private static BankController controller = new BankController();
+	final private static String numeng = "^[a-zA-Z0-9]*$"; //영문+숫자 조합만
+	final private static String koreng = "^[가-힣a-zA-Z]*$"; //한글+영문 조합만
+	final private static String phonenum = "^01(?:0|1|[6-9])-(?:\\d{3}|\\d{4})-\\d{4}$"; //휴대폰번호 양식
+	final private static String kor = "^[가-힣]*$"; //한글만
 	
-	public void mainMenu() throws Exception{
+	public void mainMenu() {
 		
 		LocalDate now = LocalDate.now();
 		System.out.println();
@@ -31,88 +38,124 @@ public class MenuView {
 		System.out.println("선택>");	
 		
 		Scanner sc = new Scanner(System.in);
-		int menuNum = sc.nextInt();
 		
-		
+		try {
+			int menuNum = Integer.parseInt(sc.nextLine());
 
-		switch (menuNum) {
-		case 1:
-			joinLogin(); 
-			break;
-	
-		case 2:
-			try {
-				deposit();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			break;
-		case 3:
-			try {
-				witdraw();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			break;
-		case 4:
-			findById();
-			break;
+			switch (menuNum) {
+			case 1:
+				joinLogin(); 
+				break;
 		
-		case 5:
-			admin();
-			break;
-			}//switch		
+			case 2:
+				try {
+					deposit();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				break;
+			case 3:
+				try {
+					witdraw();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				break;
+			case 4:
+				findById();
+				break;
+			
+			case 5:
+				admin();
+				break;
+				}//switch		
+			
+			} catch (InputMismatchException e) {
+				System.out.println("※ error! 메뉴 입력은 숫자만 가능합니다. ");
+				
+			}
 		}//while
 	}//mainMenu
 	
-	public static void joinLogin () throws Exception {
-		System.out.println("비회원이라면 회원가입을 먼저 진행해주세요");
+	public static void joinLogin () {
+		System.out.println(" ★ 비회원이라면 회원가입을 먼저 진행해주세요 ★");
 		System.out.println("----------------------------");
 		System.out.println("  1. 회원 가입 |   2. 로그인   ");
 		System.out.println("----------------------------");
-		int num = sc.nextInt();
+		
+		try {
+		
+		int num = (Integer.parseInt(sc.nextLine()));
 		String id,name,phone,pwd,pwd2;
-
+		boolean result = false;
 		switch (num) {
 		case 1:
 			System.out.print("아이디 : ");
 			id = sc.next();
-			boolean result = controller.idCheck(id);
-			if(result) {
+			boolean a = Pattern.matches(numeng, id);
+			if(a) {
+				result = controller.idCheck(id);
+				if(result) {
+					
+					System.out.print("이름 : ");
+					name = sc.next();
+					boolean a1 = Pattern.matches(koreng, name);
+					if(!a1) {
+						System.out.println(" ※ 이름에는 숫자가 들어갈 수 없습니다. ");
+						System.out.print("이름 : ");
+						name = sc.next();
+					}
+					
+					
+					System.out.println("ex) 000-0000-0000 ");
+					System.out.print("휴대폰 번호 : ");
+					phone = sc.next();
+					boolean a2 = Pattern.matches(phonenum, phone);
+					if(!a2) {
+						System.out.println(" ※ 양식에 맞게 입력하세요.");
+						System.out.print("휴대폰 번호 : ");
+						phone = sc.next();
+					}
+					
+					System.out.print("비밀번호 : ");
+					pwd = sc.next();
+					boolean a3 = Pattern.matches(numeng, pwd);
+					if(!a3) {
+						System.out.println(" ※ 비밀번호는 영문 숫자 조합으로 입력하세요.");
+						System.out.print("비밀번호 : ");
+						pwd = sc.next();
+					}
+					
+					System.out.print("비밀번호 확인 : ");
+					pwd2 = sc.next();
+					
+					if(pwd.equals(pwd2)) { 
+						
+						Member member = new Member(id, pwd, name, phone);
+						controller.insert(member);
+						break;
+						
+					} else {
+						System.out.println("비밀번호가 일치하지 않습니다.");
+						break;
+					}
+					
+				} 
+			} else {
+				System.out.println(" ※ 아이디는 영문,숫자 조합으로 입력해주세요 ");
 
-				System.out.print("이름 : ");
-				name = sc.next();
-				
-				System.out.print("휴대폰 번호 : ");
-				phone = sc.next();
-				
-				System.out.print("비밀번호 : ");
-				pwd = sc.next();
-				
-				System.out.print("비밀번호 확인 : ");
-				pwd2 = sc.next();
-				
-				if(pwd.equals(pwd2)) { 
-					
-					Member member = new Member(id, pwd, name, phone);
-					controller.insert(member);
-					break;
-					
-				} else {
-					System.out.println("비밀번호가 일치하지 않습니다.");
-					break;
-				}
 			}
+			
 			break;
 			
 		case 2:
 			System.out.println("▶ 로그인할 아이디와 비밀번호를 입력해주세요.");
 			
 			System.out.print("아이디 : ");
-			String userId = sc.next();
+			String userId = sc.nextLine();
 			
 			System.out.print("비밀번호 : ");
-			String userPwd = sc.next();
+			String userPwd = sc.nextLine();
 			
 			if(userId.equals("admin") && userPwd.equals("admin")) {
 				System.out.println(" ※ 관리자는 계좌 개설이 불가능합니다.");
@@ -120,6 +163,12 @@ public class MenuView {
 			} else {
 				//아이디 비번이 일치하면 로그인
 				Member member = controller.login(userId, userPwd);
+				if(member==null) {
+					System.out.println();
+					System.out.println(" ※ 존재하지 않는 회원입니다. \n먼저 회원 가입을 진행해주세요.");
+					System.out.println();
+					return;
+				}
 				SubView.newAccount(member);
 				break;
 			}
@@ -127,13 +176,24 @@ public class MenuView {
 		default:
 			break;
 		}
+		
+		} catch (InputMismatchException e) {
+			e.printStackTrace();
+			System.out.println("※ error! 숫자만 입력하세요. ");
+		}
 	}
 	
 	//입금 메소드
-	public static void deposit() throws Exception {
+	public static void deposit() {
 		System.out.println("▶ 본인 계좌번호를 입력하세요");
 		System.out.print("계좌번호 : ");
 		String account = sc.next();
+		boolean a = Pattern.matches(koreng, account);
+		if(a) {
+			System.out.println(" ※ 올바른 양식의 계좌번호를 입력하세요");
+			return;
+		}
+		
 		
 		System.out.println("▶ 계좌 비밀번호 네자리를 입력하세요 ");
 		System.out.print("계좌 비밀번호 : ");
@@ -146,6 +206,11 @@ public class MenuView {
 			System.out.println("▶ 입금하실 계좌번호를 입력하세요");
 			System.out.print("계좌번호 : ");
 			String uAccount = sc.next();
+			boolean a1 = Pattern.matches(koreng, uAccount);
+			if(a1) {
+				System.out.println(" ※ 올바른 양식의 계좌번호를 입력하세요");
+				return;
+			}
 			
 			System.out.println("▶ 입금하실 금액을 입력하세요");
 			System.out.print("입금 금액 : ");
@@ -167,7 +232,11 @@ public class MenuView {
 				System.out.print("계좌 비밀번호 : ");
 				String pwd1 = sc.next();
 				if(pwd.equals(pwd1)) {
-					controller.deposit(account, uAccount, amount);
+					try {
+						controller.deposit(account, uAccount, amount);
+					} catch (BalanceInstufficientException e) {
+						e.printStackTrace();
+					}
 				}
 				break;
 				
@@ -175,18 +244,34 @@ public class MenuView {
 				System.out.println("프로그램을 종료합니다.");
 				break;
 			}
+		} else {
+			System.out.println();
+			System.out.println(" ※ 비밀번호가 틀립니다. \n 프로그램을 종료합니다.");
+			return;
+			
 		}
 	}
 	
 	//출금 메소드
-	public static void witdraw() throws Exception {
+	public static void witdraw() {
 		System.out.println("▶ 출금하실 계좌번호를 입력하세요");
 		System.out.print("계좌번호 : ");
 		String account = sc.next();
+		boolean a1 = Pattern.matches(kor, account);
+		
+		if(a1) {
+			System.out.println(" ※ 올바른 양식의 계좌번호를 입력하세요");
+			return;
+		}
 		
 		System.out.println("▶ 계좌 비밀번호 네자리를 입력하세요 ");
 		System.out.print("계좌 비밀번호 : ");
 		String pwd = sc.next();
+		boolean a2 = Pattern.matches(koreng, pwd);
+		if(a2) {
+			System.out.println(" ※ 계좌 비밀번호는 숫자만 입력할 수 있습니다.");
+			return;
+		}
 		
 		boolean result = controller.pwdCheck(account, pwd);
 		
@@ -211,18 +296,28 @@ public class MenuView {
 				System.out.print("계좌 비밀번호 : ");
 				String pwd1 = sc.next();
 				if(pwd.equals(pwd1)) {
-					controller.withdraw(account, amount);
+					try {
+						controller.withdraw(account, amount);
+					} catch (BalanceInstufficientException e) {
+						e.printStackTrace();
+					}
 				}
+				break;
 				
 			case 2:
 				System.out.println("프로그램을 종료합니다.");
 				break;
 			}
+		} else {
+			System.out.println();
+			System.out.println(" ※ 비밀번호가 틀립니다. \n 프로그램을 종료합니다.");
+			return;
+			
 		}
 	}
 	
 	//계좌 조회 메소드
-	public static void findById () throws NotfoundException {
+	public static void findById () {
 		System.out.println("▶ 로그인할 아이디와 비밀번호를 입력해주세요.");
 		
 		System.out.print("아이디 : ");
@@ -244,13 +339,13 @@ public class MenuView {
 			for(Account acc : list) {
 				System.out.println("  "+acc.getUserAccount()+"   \t  "+acc.getBalance()+"    \t  "+acc.getStartDate());
 			}
-
+			System.out.println();
 		}
 
 	}
 	
 	//회원 관리 메소드
-	public static void admin() throws NotfoundException {
+	public static void admin() {
 		System.out.println("▶ 관리자 아이디와 비밀번호를 입력해주세요.");
 		
 		System.out.print("아이디 : ");
