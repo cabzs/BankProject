@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 import controller.BankController;
 import dto.Account;
 import dto.Member;
+import dto.Trade;
 import exception.BalanceInstufficientException;
 import exception.NotfoundException;
 
@@ -35,9 +36,9 @@ public class MenuView {
 		boolean flag = true;
 		while(flag) {
 		//회원가입, 로그인
-		System.out.println("-----------------------------------------------------------------------------");
-		System.out.println("  1. 계좌 개설 |   2. 입금/계좌이체  |   3. 출금  |   4. 내 계좌 조회  |   5. 회원 관리  ");
-		System.out.println("-----------------------------------------------------------------------------");
+		System.out.println("---------------------------------------------------------------------------------------------------");
+		System.out.println("  1. 계좌 개설 |   2. 입금/계좌이체  |   3. 출금  |   4. 내 계좌 조회  |   5. 거래 내역 조회  |   6. 회원 관리  ");
+		System.out.println("---------------------------------------------------------------------------------------------------");
 		System.out.println("선택>");	
 		
 		Scanner sc = new Scanner(System.in);
@@ -67,8 +68,12 @@ public class MenuView {
 			case 4:
 				findById();
 				break;
-			
+				
 			case 5:
+				tradeList();
+				break;
+				
+			case 6:
 				admin();
 				break;
 				}//switch		
@@ -334,11 +339,18 @@ public class MenuView {
 		if(member != null) {
 			
 			List<Account> list = controller.findById(userId);
+			int bal = 0;
+			for(Account acc : list) {
+				bal += acc.getBalance();
+			}
 			
 			System.out.println("====================================================");
 			System.out.println("              " + userId + "님의 계좌 목록입니다.");
+			System.out.println("            총 거래액 : " + formatter.format(bal) +"원 입니다.");
 			System.out.println("====================================================");
 			System.out.println("      계좌번호       |      잔액       |     계좌 개설일  ");
+			
+			
 			for(Account acc : list) {
 				System.out.println("  "+acc.getUserAccount()+"   \t  "+formatter.format(acc.getBalance())+"    \t  "+acc.getStartDate());
 			}
@@ -381,5 +393,54 @@ public class MenuView {
 			return;
 		}
 	}
+	
+	//계좌 거래 목록 조회
+	public static void tradeList() {
+		System.out.println("▶ 거래내역을 조회할 계좌번호를 입력하세요");
+		System.out.print("계좌번호 : ");
+		String account = sc.next();
+		boolean a1 = Pattern.matches(kor, account);
+		
+		if(a1) {
+			System.out.println(" ※ 올바른 양식의 계좌번호를 입력하세요");
+			return;
+		}
+		
+		System.out.println("▶ 계좌 비밀번호 네자리를 입력하세요 ");
+		System.out.print("계좌 비밀번호 : ");
+		String pwd = sc.next();
+		boolean a2 = Pattern.matches(koreng, pwd);
+		if(a2) {
+			System.out.println(" ※ 계좌 비밀번호는 숫자만 입력할 수 있습니다.");
+			return;
+		}
+		
+		boolean result = controller.pwdCheck(account, pwd);
+		if(result) {
+			List<Trade> list = controller.selectAllTrade(account);
+			System.out.println("=================================================================================================");
+			System.out.println("                                   "+ account +"  계좌 거래 내역 ");
+			System.out.println("-------------------------------------------------------------------------------------------------");
+			System.out.println("         거래계좌        |      거래유형     |        거래액       |       잔액       |       거래일        ");
+			System.out.println("-------------------------------------------------------------------------------------------------");
+			for(Trade t : list) {
+				String str = null;
+				if(t.getTypeId()==1) {
+					str = "입금";
+				} else {
+					str = "출금";
+				}
+				System.out.println("    " + t.getOtherAccount() + "            " + str + "               " + formatter.format(t.getAmount()) +
+						"             " + formatter.format(t.getTradeBal()) + "         " + t.getTradeDate());
+				
+			}
+			System.out.println();
+		}
+	} 
+	
+	
+	
+	
+	
 }//class
 

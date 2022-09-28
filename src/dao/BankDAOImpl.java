@@ -224,6 +224,8 @@ public class BankDAOImpl implements BankDAO {
 			pst.setString(2, uAccount);
 			int re = pst.executeUpdate();
 			con.commit();
+			tradeList(uAccount,account, amount, 1 , newBalance); //입금 받는 사람 계좌거래 목록에 추가
+			tradeList(account,uAccount, amount, 2 , accountNowBal); //입금 하는 사람 계좌거래 목록에 추가
 //			depositor(account2, accountNowBal, amount); //입금자의 db 업데이트
 			
 		} catch (Exception e) {
@@ -340,6 +342,7 @@ public class BankDAOImpl implements BankDAO {
 			pst.setLong(1, newBalance);
 			pst.setString(2, account2.getUserAccount());
 			int re = pst.executeUpdate();
+			tradeList(account, account, amount, 2, newBalance); //출금 내역 추가
 			con.commit();
 			System.out.println("▒▒▒▒▒▒▒▒▒▒▒▒출금 명세표▒▒▒▒▒▒▒▒▒▒▒▒▒");
 			System.out.println("   출금 계좌 : " + account);
@@ -524,25 +527,75 @@ public class BankDAOImpl implements BankDAO {
 		
 		return list;
 	}
-
-	
 	
 	//거래 내역 기록하는 메소드
 	@Override
-	public List<Trade> tradeList() {
+	public void tradeList(String account, String account2, int amount, int type, Long balance) {
+		Connection con = null;
+		PreparedStatement pst = null;
+		
+		String sql = "insert into trade (trade_id, user_account, amount ,trade_date ,type_id, trade_bal , other_account ) values( trade_seq.nextval, ? ,? ,sysdate , ? , ?, ? )";
+		
+		try {
+			con = DataBase.getInstance().getConnection();
+			con.setAutoCommit(false);
+			pst = con.prepareStatement(sql);
+			pst.setString(1, account);
+			pst.setLong(2, amount);
+			pst.setInt(3, type);
+			pst.setLong(4, balance);
+			pst.setString(5, account2);
+			
+			int result = pst.executeUpdate();
+			con.commit();
+			String msg = result > -1 ? "성공하였습니다." : "실패하셨습니다.";
+
+		} catch (Exception e) {
+			System.out.println("데이터베이스를 불러오는데 실패했습니다.");
+			
+			e.printStackTrace();
+		} finally {
+			try {
+				if(pst != null) pst.close();
+				if(con != null) con.close();
+			} catch(Exception e) {}
+		}
+
+	}
+
+	@Override
+	public List<Trade> selectAllTrade(String userAcount) {
 		Connection con = DataBase.getInstance().getConnection();
 		PreparedStatement pst = null;
 		ResultSet rs = null;
-		
-		List<Trade> list = new ArrayList<>();
-		
-		
-		
-		
-		return null;
-	}
-	
-	
 
+		List<Trade> list = new ArrayList<Trade>();
+		
+		String sql = " select trade_id, user_account, amount, trade_date, type_id, trade_bal, other_account from trade where user_account = ? order by trade_date desc";
+
+		try {
+			pst = con.prepareStatement(sql);
+			pst.setString(1, userAcount);
+			rs = pst.executeQuery();
+			
+			while(rs.next()) {
+				Trade trade = new Trade(rs.getInt(1), rs.getString(2), rs.getLong(3), rs.getDate(4).toLocalDate(), rs.getInt(5), rs.getLong(6), rs.getString(7));
+				list.add(trade);
+				
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			} finally {
+				try {
+					//열어주는 역순으로 닫아준다
+					if(rs != null) rs.close();
+					if(pst != null) pst.close();
+					if(con != null) con.close();
+				} catch(Exception e) {}
+			}
+		
+		return list;
+	}
 
 }

@@ -7,6 +7,7 @@ import dao.BankDAO;
 import dao.BankDAOImpl;
 import dto.Account;
 import dto.Member;
+import dto.Trade;
 import exception.BalanceInstufficientException;
 import exception.NotfoundException;
 import service.BankService;
@@ -131,6 +132,12 @@ public class BankController {
 		return service.findById(id);
 	}
 	
-	
+	/**
+	 * 계좌번호로 거래내역 조회하기
+	 * */
+	public List<Trade> selectAllTrade(String userAcount) {
+		return service.selectAllTrade(userAcount);	
+		
+	}
 
 }

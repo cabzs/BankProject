@@ -7,6 +7,7 @@ import dao.BankDAO;
 import dao.BankDAOImpl;
 import dto.Account;
 import dto.Member;
+import dto.Trade;
 import exception.NotfoundException;
 
 public class BankServiceImpl implements BankService {
@@ -75,6 +76,11 @@ public class BankServiceImpl implements BankService {
 	@Override
 	public List<Member> selectAll() {
 		return dao.selectAll();
+	}
+
+	@Override
+	public List<Trade> selectAllTrade(String userAcount) {
+		return dao.selectAllTrade(userAcount);
 	}
 
 

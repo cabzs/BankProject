@@ -5,6 +5,7 @@ import java.util.List;
 
 import dto.Account;
 import dto.Member;
+import dto.Trade;
 import exception.NotfoundException;
 
 public interface BankService {
@@ -68,7 +69,10 @@ public interface BankService {
 	public List<Member> selectAll();
 	
 
-	
+	/**
+	 * 계좌번호로 거래내역 조회하기
+	 * */
+	public List<Trade> selectAllTrade(String userAcount);
 	
 
 }

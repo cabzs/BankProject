@@ -66,8 +66,14 @@ public interface BankDAO {
 	public List<Member> selectAll();
 	
 	/**
-	 * 계좌 거래 내역 리스트
+	 * 계좌 거래 내역 추가
 	 * */
-	public List<Trade> tradeList();
+	public void tradeList(String account, String account2 , int amount, int type, Long balance);
+	
+	/**
+	 * 계좌 거래 내역 검색
+	 * */
+	public List<Trade> selectAllTrade(String userAcount);
+	
 
 }
