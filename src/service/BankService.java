@@ -6,6 +6,7 @@ import java.util.List;
 import dto.Account;
 import dto.Member;
 import dto.Trade;
+import dto.UserLevel;
 import exception.NotfoundException;
 
 public interface BankService {
@@ -44,11 +45,16 @@ public interface BankService {
 	
 	
 	/**
-	 * 입금
+	 * 계좌이체
 	 * @throws NotfoundException 
 	 * */
-	public void deposit(String account, String uAccount, int amount);
-
+	public void transfer(String account, String uAccount, int amount);
+	
+	/**
+	 * 입금
+	 * */
+	public void deposit(String account, int amount);
+	
 	
 	/**
 	 * 출금
@@ -73,6 +79,12 @@ public interface BankService {
 	 * 계좌번호로 거래내역 조회하기
 	 * */
 	public List<Trade> selectAllTrade(String userAcount);
+	
+	
+	/**
+	 * 회원 아이디로 이자율 구하기
+	 * */
+	public UserLevel selectInterest(String userId);
 	
 
 }

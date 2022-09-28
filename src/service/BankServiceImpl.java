@@ -8,6 +8,7 @@ import dao.BankDAOImpl;
 import dto.Account;
 import dto.Member;
 import dto.Trade;
+import dto.UserLevel;
 import exception.NotfoundException;
 
 public class BankServiceImpl implements BankService {
@@ -40,8 +41,8 @@ public class BankServiceImpl implements BankService {
 	}
 	
 	@Override
-	public void deposit(String account, String uAccount, int amount) {
-		dao.deposit(account, uAccount, amount);
+	public void transfer(String account, String uAccount, int amount) {
+		dao.transfer(account, uAccount, amount);
 	}
 
 	@Override
@@ -81,6 +82,18 @@ public class BankServiceImpl implements BankService {
 	@Override
 	public List<Trade> selectAllTrade(String userAcount) {
 		return dao.selectAllTrade(userAcount);
+	}
+
+	
+	@Override
+	public UserLevel selectInterest(String userId) {
+		return dao.selectInterest(userId);
+	}
+
+	@Override
+	public void deposit(String account, int amount) {
+		dao.deposit(account, amount);
+		
 	}
 
 

@@ -12,6 +12,7 @@ import controller.BankController;
 import dto.Account;
 import dto.Member;
 import dto.Trade;
+import dto.UserLevel;
 import exception.BalanceInstufficientException;
 import exception.NotfoundException;
 
@@ -22,6 +23,7 @@ public class MenuView {
 	final private static String koreng = "^[가-힣a-zA-Z]*$"; //한글+영문 조합만
 	final private static String phonenum = "^01(?:0|1|[6-9])-(?:\\d{3}|\\d{4})-\\d{4}$"; //휴대폰번호 양식
 	final private static String kor = "^[가-힣]*$"; //한글만
+	private static UserLevel userLevel;
 	
 	private static DecimalFormat formatter = new DecimalFormat("###,###");
 	
@@ -36,9 +38,9 @@ public class MenuView {
 		boolean flag = true;
 		while(flag) {
 		//회원가입, 로그인
-		System.out.println("---------------------------------------------------------------------------------------------------");
-		System.out.println("  1. 계좌 개설 |   2. 입금/계좌이체  |   3. 출금  |   4. 내 계좌 조회  |   5. 거래 내역 조회  |   6. 회원 관리  ");
-		System.out.println("---------------------------------------------------------------------------------------------------");
+		System.out.println("-----------------------------------------------------------------------------------------------------------");
+		System.out.println("  1. 계좌 개설 |   2. 입금  |   3. 출금  |   4. 계좌 이체  |   5. 내 계좌 조회  |   6. 거래 내역 조회  |   7. 회원 관리  ");
+		System.out.println("-----------------------------------------------------------------------------------------------------------");
 		System.out.println("선택>");	
 		
 		Scanner sc = new Scanner(System.in);
@@ -65,15 +67,20 @@ public class MenuView {
 					e.printStackTrace();
 				}
 				break;
+				
 			case 4:
-				findById();
+				transfer();
 				break;
 				
 			case 5:
-				tradeList();
+				findById();
 				break;
 				
 			case 6:
+				tradeList();
+				break;
+				
+			case 7:
 				admin();
 				break;
 				}//switch		
@@ -192,7 +199,7 @@ public class MenuView {
 	}
 	
 	//입금 메소드
-	public static void deposit() {
+	public static void transfer() {
 		System.out.println("▶ 본인 계좌번호를 입력하세요");
 		System.out.print("계좌번호 : ");
 		String account = sc.next();
@@ -241,7 +248,7 @@ public class MenuView {
 				String pwd1 = sc.next();
 				if(pwd.equals(pwd1)) {
 					try {
-						controller.deposit(account, uAccount, amount);
+						controller.transfer(account, uAccount, amount);
 					} catch (BalanceInstufficientException e) {
 						e.printStackTrace();
 					}
@@ -336,6 +343,8 @@ public class MenuView {
 		
 		//아이디 비번이 일치하면 로그인
 		Member member = controller.login(userId, userPwd);
+		UserLevel ul = controller.selectInterest(userId);
+		
 		if(member != null) {
 			
 			List<Account> list = controller.findById(userId);
@@ -355,6 +364,12 @@ public class MenuView {
 				System.out.println("  "+acc.getUserAccount()+"   \t  "+formatter.format(acc.getBalance())+"    \t  "+acc.getStartDate());
 			}
 			System.out.println();
+			System.out.println("========================================================================");
+			System.out.println("           " + userId + "님의 회원 등급은 현재 "+ ul.getLevelName() +"입니다.");
+			System.out.println("           연간 이자율은 현재 "+ ul.getInterest() +"% 입니다.");
+			System.out.println("           "+ LocalDate.now().plusYears(1)+"일 까지의 예상 이자는 총 " +formatter.format( bal * ul.getInterest() / 100 )+" 원 입니다.");
+			System.out.println("========================================================================");
+			
 		}
 
 	}
@@ -373,20 +388,30 @@ public class MenuView {
 			controller.login(userId, userPwd);
 			System.out.println("관리자로 로그인 되었습니다.");
 			List<Member> list = controller.selectAll();
-			System.out.println("===================================================================");
-			System.out.println("                           JAVA 은행 회원 목록                  ");
-			System.out.println("===================================================================");
+			System.out.println("===========================================================================");
+			System.out.println("                              JAVA 은행 회원 목록                  ");
+			System.out.println("===========================================================================");
 			for(Member m : list) {
-				System.out.println("    아이디   |    회원명   |    연락처    |   회원 등급  |      가입일  ");
-				System.out.println("===================================================================");
-				System.out.println("    "+m.getUserId()+"       "+m.getUserName()+"      "+m.getPhone()+"     "+m.getLevelId() +"        "+m.getDate());
-				System.out.println("-------------------------------------------------------------------");
+				String str = null;
+				if(m.getLevelId().equals("1")) {
+					str = "Bronze";
+				}else if(m.getLevelId().equals("2")) {
+					str = "Silver";
+				}else if(m.getLevelId().equals("3")) {
+					str = "Gold";
+				}else if(m.getLevelId().equals("4")) {
+					str = "Platinum";
+				}
+				System.out.println("    아이디   |    회원명   |    연락처       |     회원 등급    |      가입일  ");
+				System.out.println("===========================================================================");
+				System.out.println("    "+m.getUserId()+"       "+m.getUserName()+"      "+m.getPhone()+"         " +str + "          "+m.getDate());
+				System.out.println("---------------------------------------------------------------------------");
 				System.out.println("         계좌        |         잔액        |        계좌 개설일        ");
-				System.out.println("-------------------------------------------------------------------");
+				System.out.println("---------------------------------------------------------------------------");
 				for(Account a : m.getAcList()) {
 					System.out.println("  ㄴ "+a.getUserAccount()+"         "+formatter.format(a.getBalance())+" 원              "+a.getStartDate());
 				}
-				System.out.println("===================================================================");
+				System.out.println("===========================================================================");
 			}
 		} else {
 			System.out.println("※ 해당 메뉴는 관리자만 접근 가능합니다.");
@@ -438,9 +463,69 @@ public class MenuView {
 		}
 	} 
 	
-	
-	
-	
+	//출금 메소드
+		public static void deposit() {
+			System.out.println("▶ 입금하실 계좌번호를 입력하세요");
+			System.out.print("계좌번호 : ");
+			String account = sc.next();
+			boolean a1 = Pattern.matches(kor, account);
+			
+			if(a1) {
+				System.out.println(" ※ 올바른 양식의 계좌번호를 입력하세요");
+				return;
+			}
+			
+			System.out.println("▶ 계좌 비밀번호 네자리를 입력하세요 ");
+			System.out.print("계좌 비밀번호 : ");
+			String pwd = sc.next();
+			boolean a2 = Pattern.matches(koreng, pwd);
+			if(a2) {
+				System.out.println(" ※ 계좌 비밀번호는 숫자만 입력할 수 있습니다.");
+				return;
+			}
+			
+			boolean result = controller.pwdCheck(account, pwd);
+			
+			if(result) { // 내 계좌정보 확인 되면 이동
+
+				System.out.println("▶ 입금하실 금액을 입력하세요");
+				System.out.print("입금 금액 : ");
+				int amount = sc.nextInt();
+
+				System.out.println("입금하실 금액: " + amount);
+				
+				System.out.println("▶ 해당 계좌로의 입금을 진행하시겠습니까?");
+				System.out.println("---------------------");
+				System.out.println("  1. 예 |   2. 아니요  ");
+				System.out.println("---------------------");
+				int num = sc.nextInt();
+				
+				switch (num) {
+				case 1:
+					//계좌번호 비밀번호 입력, 
+					System.out.println("▶ 계좌 비밀번호 네자리를 한번 더 입력하세요 ");
+					System.out.print("계좌 비밀번호 : ");
+					String pwd1 = sc.next();
+					if(pwd.equals(pwd1)) {
+						try {
+							controller.deposit(account, amount);
+						} catch (BalanceInstufficientException e) {
+							e.printStackTrace();
+						}
+					}
+					break;
+					
+				case 2:
+					System.out.println("프로그램을 종료합니다.");
+					break;
+				}
+			} else {
+				System.out.println();
+				System.out.println(" ※ 비밀번호가 틀립니다. \n 프로그램을 종료합니다.");
+				return;
+				
+			}
+		}
 	
 }//class
 

@@ -8,6 +8,7 @@ import dao.BankDAOImpl;
 import dto.Account;
 import dto.Member;
 import dto.Trade;
+import dto.UserLevel;
 import exception.BalanceInstufficientException;
 import exception.NotfoundException;
 import service.BankService;
@@ -101,15 +102,28 @@ public class BankController {
 	/**
 	 * 입금
 	 * */
-	public void deposit(String account, String uAccount, int amount) throws BalanceInstufficientException {
+	public void transfer(String account, String uAccount, int amount) throws BalanceInstufficientException {
 		if(amount<0) {
 			throw new BalanceInstufficientException("입금은 0원 이상부터 가능합니다.");
 		} else if(amount > dao.findbyAc(account).getBalance()) {
 			throw new BalanceInstufficientException("출금액이 잔액보다 큽니다.");
 		} else {
-			service.deposit(account, uAccount, amount);
+			service.transfer(account, uAccount, amount);
 		}
 	}
+	
+	/**
+	 * 입금
+	 * */
+	public void deposit(String account, int amount) throws BalanceInstufficientException {
+		if(amount<0) {
+			throw new BalanceInstufficientException("입금은 0원 이상부터 가능합니다.");
+		}
+		
+		service.deposit(account, amount);
+	}
+	
+	
 	
 	/**
 	 * 출금
@@ -138,6 +152,13 @@ public class BankController {
 	public List<Trade> selectAllTrade(String userAcount) {
 		return service.selectAllTrade(userAcount);	
 		
+	}
+	
+	/**
+	 * 회원 아이디로 등급 객체 구하기
+	 * */
+	public UserLevel selectInterest(String userId) {
+		return service.selectInterest(userId);
 	}
 
 }

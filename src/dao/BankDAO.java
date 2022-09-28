@@ -6,6 +6,7 @@ import java.util.List;
 import dto.Account;
 import dto.Member;
 import dto.Trade;
+import dto.UserLevel;
 
 public interface BankDAO {
 	
@@ -37,7 +38,12 @@ public interface BankDAO {
 	/**
 	 * 입금
 	 * */
-	public void deposit(String account, String id, int amount);
+	public void transfer(String account, String id, int amount);
+	
+	/**
+	 * 입금
+	 * */
+	public void deposit(String account, int amount);
 	
 	
 	/**
@@ -75,5 +81,21 @@ public interface BankDAO {
 	 * */
 	public List<Trade> selectAllTrade(String userAcount);
 	
+	/**
+	 * 회원 아이디로 이자율 구하기 (등급 객체)
+	 * */
+	public UserLevel selectInterest(String userId);
+	
+	
+	/**
+	 * 회원 총 보유액 추가
+	 * */
+	public void updateTotalBal(String userId);
 
+	
+	/**
+	 * 회원 등급 업데이트
+	 * */
+	public void updateUserLevel(Member member);
+	
 }

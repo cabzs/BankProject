@@ -4,13 +4,20 @@ public class UserLevel {
 	
 	private int levelId;
 	private String levelName;
-	private long interest;
+	private double interest;
 	
 	
-	public UserLevel(int levelId, String levelName, long interest) {
+	public UserLevel(int levelId, String levelName, double interest) {
 		super();
 		this.levelId = levelId;
 		this.levelName = levelName;
+		this.interest = interest;
+	}
+
+
+
+	public UserLevel(double interest) {
+		super();
 		this.interest = interest;
 	}
 
@@ -35,16 +42,16 @@ public class UserLevel {
 	}
 
 
-	public long getInterest() {
+
+	public double getInterest() {
 		return interest;
 	}
 
 
-	public void setInterest(long interest) {
+
+	public void setInterest(double interest) {
 		this.interest = interest;
 	}
-	
-	
 	
 
 }

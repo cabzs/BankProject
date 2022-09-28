@@ -11,6 +11,7 @@ public class Member {
 	private String phone;
 	private LocalDate date; //가입일
 	private String levelId; //이용자 등급
+	private Long totalBal;
 	
 	private List<Account> acList; //회원당 계좌 리스트
 	
@@ -48,6 +49,30 @@ public class Member {
 	}
 
 	
+
+	public Member(String userId, String userName, String phone, LocalDate date, String levelId,
+			Long totalBal) {
+		super();
+		this.userId = userId;
+		this.userName = userName;
+		this.phone = phone;
+		this.date = date;
+		this.levelId = levelId;
+		this.totalBal = totalBal;
+	}
+
+	public Member(String userId, String userPwd, String userName, String phone, LocalDate date, String levelId,
+			Long totalBal, List<Account> acList) {
+		super();
+		this.userId = userId;
+		this.userPwd = userPwd;
+		this.userName = userName;
+		this.phone = phone;
+		this.date = date;
+		this.levelId = levelId;
+		this.totalBal = totalBal;
+		this.acList = acList;
+	}
 
 	public Member(String userId, String userName, String phone, LocalDate date, String levelId) {
 		super();
@@ -139,6 +164,14 @@ public class Member {
 
 	public void setAcList(List<Account> acList) {
 		this.acList = acList;
+	}
+
+	public Long getTotalBal() {
+		return totalBal;
+	}
+
+	public void setTotalBal(Long totalBal) {
+		this.totalBal = totalBal;
 	}
 	
 	
