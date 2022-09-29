@@ -18,11 +18,20 @@ public class Member {
 	//account list...
 	
 	
+	
 	public Member(String userId) {
 		super();
 		this.userId = userId;
 	}
 	
+	public Member(String userId, String userName, String levelId, Long totalBal) {
+		super();
+		this.userId = userId;
+		this.userName = userName;
+		this.levelId = levelId;
+		this.totalBal = totalBal;
+	}
+
 	public Member(String userId, String userPwd) {
 		super();
 		this.userId = userId;

@@ -98,4 +98,9 @@ public interface BankDAO {
 	 * */
 	public void updateUserLevel(Member member);
 	
+	/**
+	 * 계좌번호로 회원 정보 구하기
+	 * */
+	public Member findMemberbyAc (String account);
+	
 }

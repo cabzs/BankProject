@@ -65,7 +65,7 @@ public class BankDAOImpl implements BankDAO {
 	public void insert(Member member) {
 		Connection con = DataBase.getInstance().getConnection();
 		PreparedStatement pst = null;
-		String sql = " INSERT INTO member VALUES(?, ?, ?, ?, sysdate, 1) ";
+		String sql = " INSERT INTO member VALUES(?, ?, ?, ?, sysdate, 1, 0) ";
 		//(id, pwd, name, phone, date)
 		
 		try {
@@ -216,6 +216,10 @@ public class BankDAOImpl implements BankDAO {
 			tradeList(account,uAccount, amount, 2 , accountNowBal); //입금 하는 사람 계좌거래 목록에 추가
 			updateTotalBal(account1.getUserId());
 			updateTotalBal(account2.getUserId());
+			
+			updateUserLevel(findMemberbyAc(account));
+			updateUserLevel(findMemberbyAc(uAccount));
+			
 //			depositor(account2, accountNowBal, amount); //입금자의 db 업데이트
 			
 		} catch (Exception e) {
@@ -279,6 +283,7 @@ public class BankDAOImpl implements BankDAO {
 			pst.setString(2, account2.getUserAccount());
 			int re = pst.executeUpdate();
 			con.commit();
+			
 			System.out.println("   내 계좌 잔액 : " + accountNowBal);
 			System.out.println();
 
@@ -333,8 +338,10 @@ public class BankDAOImpl implements BankDAO {
 			pst.setString(2, account2.getUserAccount());
 			int re = pst.executeUpdate();
 			tradeList(account, account, amount, 2, newBalance); //출금 내역 추가
-			updateTotalBal(account2.getUserId());
 			con.commit();
+			updateTotalBal(account2.getUserId());
+			updateUserLevel(findMemberbyAc(account));
+			
 			System.out.println("▒▒▒▒▒▒▒▒▒▒▒▒출금 명세표▒▒▒▒▒▒▒▒▒▒▒▒▒");
 			System.out.println("   출금 계좌 : " + account);
 			System.out.println("   출금액 : " + amount);
@@ -395,7 +402,7 @@ public class BankDAOImpl implements BankDAO {
 			//등급 업데이트 호출 ^^
 			//계좌 정보를 가져와서 얼마있는지 본다...
 			//어느 범위에 있는지 본다.....
-			
+			updateUserLevel(findMemberbyAc(account));
 			
 			System.out.println("▒▒▒▒▒▒▒▒▒▒▒▒입금 명세표▒▒▒▒▒▒▒▒▒▒▒▒▒");
 			System.out.println("   입금 계좌 : " + account);
@@ -487,6 +494,8 @@ public class BankDAOImpl implements BankDAO {
 			int result = pst.executeUpdate();
 			String msg = result > -1 ? "계좌가 개설되었습니다." : "계좌 개설에 실패하셨습니다.";
 			System.out.println(msg);
+			
+			updateTotalBal(account.getUserId());
 			
 			if(result>0) {
 				re=true;
@@ -688,12 +697,6 @@ public class BankDAOImpl implements BankDAO {
 		return userlevel;
 	}
 
-	/**
-	 * 회원 등급 변경
-	 * 계좌 잔고 3천만원 이상 - 2등급
-	 * 계좌 잔고 8천만원 이상 - 3등급
-	 * 계좌 잔고 1억원 이상 - 4등급
-	 * */
 	@Override
 	public void updateTotalBal(String userId) {
 		Connection con = DataBase.getInstance().getConnection();
@@ -730,7 +733,69 @@ public class BankDAOImpl implements BankDAO {
 	 * */
 	@Override
 	public void updateUserLevel(Member member) {
+		Connection con = DataBase.getInstance().getConnection();
+		PreparedStatement pst = null;
+		ResultSet rs = null;
 		
+		String sql = "update member set level_id = "
+										+ "case "
+										+ "when total_bal >= 5000000 and total_bal > 3000000 then 4 "
+										+ "when total_bal >= 3000000 and total_bal > 1000000 then 3 "
+										+ "when total_bal >= 1000000 then 2 "
+										+ "when total_bal < 1000000 then 1"
+										+ "end where user_id = ? ";
+		
+		try {
+			pst = con.prepareStatement(sql);
+			pst.setString(1, member.getUserId());
+			pst.executeUpdate();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				//열어주는 역순으로 닫아준다
+				if(rs != null) rs.close();
+				if(pst != null) pst.close();
+				if(con != null) con.close();
+			} catch(Exception e) {}
+		}
+	}
+
+	@Override
+	public Member findMemberbyAc(String account) {
+		Connection con = DataBase.getInstance().getConnection();
+		PreparedStatement pst = null;
+		ResultSet rs = null;
+		Member member = null;
+		
+		String sql ="select m.user_id, m.user_name, m.level_id, m.total_bal "
+				+ " from Member m left join account a\r\n"
+				+ " on m.user_id = a.user_id\r\n"
+				+ " where a.User_account = ? ";
+		
+		try {
+			pst = con.prepareStatement(sql);
+			pst.setString(1, account);
+			rs = pst.executeQuery();
+			
+			while(rs.next()) {
+				member = new Member(rs.getString(1),rs.getString(2),rs.getString(3),rs.getLong(4));
+				
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			} finally {
+				try {
+					//열어주는 역순으로 닫아준다
+					if(rs != null) rs.close();
+					if(pst != null) pst.close();
+					if(con != null) con.close();
+				} catch(Exception e) {}
+			}
+		
+		return member;
 	}
 
 }

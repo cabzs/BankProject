@@ -23,7 +23,6 @@ public class MenuView {
 	final private static String koreng = "^[가-힣a-zA-Z]*$"; //한글+영문 조합만
 	final private static String phonenum = "^01(?:0|1|[6-9])-(?:\\d{3}|\\d{4})-\\d{4}$"; //휴대폰번호 양식
 	final private static String kor = "^[가-힣]*$"; //한글만
-	private static UserLevel userLevel;
 	
 	private static DecimalFormat formatter = new DecimalFormat("###,###");
 	
@@ -44,7 +43,6 @@ public class MenuView {
 		System.out.println("선택>");	
 		
 		Scanner sc = new Scanner(System.in);
-		
 		try {
 			int menuNum = Integer.parseInt(sc.nextLine());
 
@@ -143,7 +141,7 @@ public class MenuView {
 					
 					System.out.print("비밀번호 확인 : ");
 					pwd2 = sc.next();
-					
+					sc.nextLine();
 					if(pwd.equals(pwd2)) { 
 						
 						Member member = new Member(id, pwd, name, phone);
@@ -289,7 +287,6 @@ public class MenuView {
 		}
 		
 		boolean result = controller.pwdCheck(account, pwd);
-		
 		if(result) { // 내 계좌정보 확인 되면 이동
 
 			System.out.println("▶ 출금하실 금액을 입력하세요");
