@@ -30,9 +30,9 @@ public class MenuView {
 		
 		LocalDate now = LocalDate.now();
 		System.out.println();
-		System.out.println("---------------------------     JAVA 은행    ---------------------------------");
-		System.out.println("                              "+  now    );
-		System.out.println("-----------------------------------------------------------------------------");
+		System.out.println("--------------------------------------     JAVA 은행    ---------------------------------------------------");
+		System.out.println("                                          "+  now    );
+		System.out.println("-----------------------------------------------------------------------------------------------------------");
 		
 		boolean flag = true;
 		while(flag) {
